@@ -1,4 +1,4 @@
-<?
+<?php
 /*
   程式 : big5 字串處理函數集
   檔名 : big5_func.inc
@@ -9,8 +9,8 @@
 	寫這些程式是看見 LinuxFab 上討論區上很多人有中文問題才寫的
 	我不能保證會發生什麼問題 , 若有 bug 請來信討論不要謾罵
 	
-  時間 : 2003/3/6
-  版本 : 0.22
+  時間 : 2005/1/20
+  版本 : 0.23
   
 
   PS 1 : 詳細安裝方式與使用方式請參考 readme.html 
@@ -18,6 +18,11 @@
   PS 3 : PHP 自從 4.3.0 之後已經正式支援big5字串 , 效果不錯 , 本函數集也許不會再做大幅更新了
   	因為有許多函數可以用 PHP 4.3.0 來做有相同效果 , 不過 PHP 4.3.0 尚未提供 addslashes 處理
   	雙位元字串...是可惜之處
+  	
+  版權說明 :
+  	本程式完全免費 , 任何人都可以自由修改與散佈
+  	但是若有修改本程式任何程式碼 , 請保留原始作者(就是我)的版權聲明
+  	
   
 */
 
@@ -25,9 +30,8 @@
 define("BIG5_FILE_DIR" , dirname(__FILE__) );
 
 
-
 /* 程式開始 */
-# error_reporting(E_ALL);
+
 define("BIG5_UNICODE_START" , 0xa140);	// 目前中文轉 Unicocde 的 BIG5 字起始值
 define("UTF16_FIRST_CHAR" ,chr(0xff).chr(0xfe));
 
@@ -58,6 +62,10 @@ if(function_exists("iconv"))
 else
     include_once(BIG5_FILE_DIR . "/big5_func.default.php");
 
+if(function_exists("mb_strlen"))
+    define('BIG5_SUPPORT_MB',true);
+else 
+    define('BIG5_SUPPORT_MB',false);
 
 function big5_isBig5($c="")
 {
@@ -154,7 +162,7 @@ function big5_strrpos($haystack , $needle)
     }
     else
         $first_char = big5_substr($needle,0,1);
-    echo $first_char;
+
     $len =big5_strlen($haystack);
     for($i=$len ; $i>-1 ; $i--)
     {

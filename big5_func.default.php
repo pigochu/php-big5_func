@@ -1,4 +1,4 @@
-<?
+<?php
 /* big5 function default */
 
 
@@ -189,21 +189,25 @@ function big5_str_replace($search , $replace, $subject)
 
 function big5_strlen($str)
 {
-
-   $return_len = 0;
-   $len = strlen($str);
-   for($i=0; $i<$len; $i++)
-   {
-       if(big5_isBig5( substr($str,$i,2)))
-           ++$i;
-       $return_len++;
-   }
-   return $return_len;
+    if(BIG5_SUPPORT_MB)
+        return mb_strlen ( $str ,BIG5_ENCODER );
+    else {
+        $return_len = 0;
+        $len = strlen($str);
+        for($i=0; $i<$len; $i++)
+        {
+            if(big5_isBig5( substr($str,$i,2)))
+                ++$i;
+            $return_len++;
+        }
+        return $return_len;
+    }
 }
 
 function big5_substr($str,$start,$len=0)
 {
-
+    if(BIG5_SUPPORT_MB)
+	return mb_substr( $str , $start , $len ,BIG5_ENCODER);
    $offset = 1; # 字元的指標
    if(!$len) $len = strlen($str);
    $str_len = strlen($str);

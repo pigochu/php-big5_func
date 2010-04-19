@@ -11,31 +11,39 @@
 	line-height: 15pt;
 	font-family: "Arial", "Helvetica", "sans-serif";
 }
+.style1 {color: #990000}
 -->
 </style>
 </head>
 
 <body>
-<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.22</font></strong></p>
+<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.23</font></strong></p>
 <ol>
   <li>快速安裝方法 <span class="font9"><br />
     <br />
+    </span>
     <ul>
-      <li class="font9"> 將 ZIP 檔案解開後 , 放到你喜歡的位置 , 例如 /var/www/htdocs/big5_func</li>
-      <li class="font9"> 在您的 php 程式以 require , require_once, include , include_once 
-        將 big5_func.inc 引入 , 例如 include(&quot;big5_func/big5_func.inc&quot;);</li>
-      <li class="font9">寫一支程式試試看 , 例如 : echo big5_addslashes(&quot;哈哈abc' '測試許\&quot;); 
-        若正常顯示則代表安裝成功</li>
-      <li class="font9">若您沒有安裝 iconv , <strong>強烈建議您安裝 iconv</strong> , 因為這將加快本函數集的運算速度 
+      <li class="font9"><span class="font9"> 將 ZIP 檔案解開後 , 放到你喜歡的位置 , 例如 /var/www/htdocs/big5_func</span></li>
+      <li class="font9"><span class="font9"> 在您的 php 程式以 require , require_once, include , include_once 
+        將 big5_func.inc 引入 , 例如 include(&quot;big5_func/big5_func.inc&quot;);</span></li>
+      <li class="font9"><span class="font9">寫一支程式試試看 , 例如 : echo big5_addslashes(&quot;哈哈abc' '測試許\&quot;); 
+        若正常顯示則代表安裝成功</span></li>
+      <li class="font9"><span class="font9">若您沒有安裝 iconv , <strong>強烈建議您安裝 iconv</strong> , 因為這將加快本函數集的運算速度 
         , 我自己測試在 php4.2.3 win32 版已經提供 iconv , 不過您必須自行修改 php.ini , 將 ;extension=php_iconv.dll 
         的注解拿掉 , 並且將您 php 安裝目錄下的 dll 目錄下所有檔案拷貝到您的 winnt(或windows)/system32(或system) 
         目錄下 , 接著您可以重新啟動您的 Web Server , 以 phpinfo() 檢查有沒有載入 iconv , 假如您是 Linux 
         使用者 , 且是自己編譯 PHP , 那麼您可以到 iconv 網站下載 iconv 套件回來編譯 , 網址是 <a href="http://www.gnu.org/software/libiconv/">http://www.gnu.org/software/libiconv/</a> 
-        , 編譯 PHP 時需要指定 --with-iconv=(你的iconv安裝目錄)<br />
-        <br />
-      </li>
+      , 編譯 PHP 時需要指定 --with-iconv=(你的iconv安裝目錄)</span></li>
+      <li class="font9"><span class="font9">另外建議 PHP 4.3 以上版本把 
+
+
+ Multi-Byte String Functions
+
+ 功能打開 , 可以加快某些函速的效能<br />
+        </span><span class="font9"><br />
+      </span></li>
     </ul>
-    </span></li>
+  </li>
   <li>提供的函數列表與用法範例 : 基本上有許多函數名稱與 PHP 類似, 用法也相同 <br />
     <br />
     <ul>
@@ -51,6 +59,7 @@
         範例 : &lt;script&gt; alert(&quot;&lt;? echo big5_addslashes(&quot;許'\功\&quot;); 
         ?&gt;&quot;); &lt;/script&gt;<br />
         輸出 : 瀏覽器會跳出警告視窗內容為 &quot;許功&quot;<br />
+        <span class="style1">PS : 若使用 MySQL Server 的預設語系是 big5 (--with-charset=big5), 則建議不要使用本函數將字串轉換後增加到資料庫 , 您可以直接使用 mysql_real_esacape_string() 可以更安全與快速 , 另外建議大家使用 ADODB(<a href="http://adodb.sourceforge.net">http://adodb.sourceforge.net</a>/) 這類的抽象程式庫或 Pear DB, 目前都有支援資料庫跳脫字元處理</span><br />
         </span> </li>
       <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_stripslashes</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">str</font>) 
@@ -164,9 +173,12 @@
   </li>
   <li>版本異動 <br />
     <ul>
+      <li>0.23 版 (2005/1/20) <br />
+      1. 判斷是否有 mb function , 若有 , 則某些函數的效能可以加快 , 為何不另外做一個 big5_func.mb.php ? 因為經過測試 , mb function 的轉碼 mb_convert_encoding() 在速度上比 iconv 速度慢太多 .. 所以不打算另外做一個全新的函數 , 而只挑幾個速度快的函數修改<br />
+ 2. 修改 big5_func.iconv.php 內的函數 , 採用 UTF-8 來轉碼 , 改變的原因不明 ... 不知道以前怎麼想的 ... 怎會用 UTF-16 轉來轉去又判斷一堆有的沒的 , 另外就是有網友討論 , ICONV 新版本在使用 big5_addslashes big5_stripslashes 出現錯誤而建議我改寫 , 因此就改成以 UTF-8 直接轉</li>
       <li>0.22 版 (2003/3/6) <br />
         <span class="font9">應網友 ADar Que 要求 , 增加 big5_strrpos 函數 , 與原 PHP 的 strrpos 
-        用法一模一樣<br />
+          用法一模一樣<br />
         修正 big5_strpos() 若指定 offset 則傳回數字會錯誤 , 謝謝 Adar Que 指正<br />
         增加一些函數的錯誤追蹤 , 方便撰寫程式時發生錯誤會顯示那一個函數,檔案,行數的錯誤<br />
         </span></li>
@@ -296,9 +308,13 @@
         int big5_strlen(string str) : 與 strlen 功能相同<br />
         string big5_substr(string str,int start , int length) : 與 substr 一樣<br />
         string big5_strtolower(string str) : 與 strtolower 一樣<br />
-        string big5_strtoupper(string str) : 與 strtoupper 一樣 </span></li>
+        string big5_strtoupper(string str) : 與 strtoupper 一樣<br />
+        </span></li>
     </ul>
   </li>
+  <li>版權聲明<br />
+  本程式完全免費 , 任何人都可以自由修改與善佈 , 但是若有修改本程式任何程式碼 , 請保留原始作者(就是我)的版權聲明<br />
+  作者 Pigo Chu &lt;pigo@ms5.url.com.tw&gt; </li>
 </ol>
 </body>
 </html>
