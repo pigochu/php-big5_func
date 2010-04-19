@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="big5"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Big5 Function 文件</title>
+<meta http-equiv="Content-Type" content="text/html; charset=big5" />
+<style type="text/css">
+<!--
+.font9 {
+	font-size: 10pt;
+	line-height: 15pt;
+	font-family: "Arial", "Helvetica", "sans-serif";
+}
+-->
+</style>
+</head>
+
+<body>
+<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.19</font></strong></p>
+<ol>
+  <li>快速安裝方法 <span class="font9"><br />
+    <br />
+    <ul>
+      <li class="font9"> 將 ZIP 檔案解開後 , 放到你喜歡的位置 , 例如 /var/www/htdocs/big5_func</li>
+      <li class="font9"> 修改 <font face="Arial, Helvetica, sans-serif">big5_func.inc</font> 
+        的 <font face="Arial, Helvetica, sans-serif">define(&quot;BIG5_FILE_DIR&quot; 
+        , UR_LIB_DIR ); ,</font> 將 UR_LIB_DIR 改成你放本函數的目錄 , 例如 define(&quot;BIG5_FILE_DIR&quot; 
+        , &quot;/var/www/htdocs/big5_func/&quot;);</li>
+      <li class="font9">在您的 php 程式以 require , require_once, include , include_once 
+        將 big5_func.inc 引入 , 例如 include(&quot;big5_func/big5_func.inc&quot;);</li>
+      <li class="font9">寫一支程式試試看 , 例如 : echo big5_addslashes(&quot;哈哈abc' '測試許\&quot;); 
+        若正常顯示則代表安裝成功</li>
+      <li class="font9">若您沒有安裝 iconv , <strong>強烈建議您安裝 iconv</strong> , 因為這將加快本函數集的運算速度 
+        , 我自己測試在 php4.2.3 win32 版已經提供 iconv , 不過您必須自行修改 php.ini , 將 ;extension=php_iconv.dll 
+        的注解拿掉 , 並且將您 php 安裝目錄下的 dll 目錄下所有檔案拷貝到您的 winnt(或windows)/system32(或system) 
+        目錄下 , 接著您可以重新啟動您的 Web Server , 以 phpinfo() 檢查有沒有載入 iconv , 假如您是 Linux 
+        使用者 , 且是自己編譯 PHP , 那麼您可以到 iconv 網站下載 iconv 套件回來編譯 , 網址是 <a href="http://www.gnu.org/software/libiconv/">http://www.gnu.org/software/libiconv/</a> 
+        , 編譯 PHP 時需要指定 --with-iconv=(你的iconv安裝目錄)<br />
+        <br />
+      </li>
+    </ul>
+    </span></li>
+  <li>提供的函數列表與用法範例 : 基本上有許多函數名稱與 PHP 類似, 用法也相同 <br />
+    <br />
+    <ul>
+      <li><font color="#009900"><strong><font color="#000099">bool</font> big5_isBig5</strong></font>( 
+        <font color="#993300">string str</font>) : <span class="font9">判斷是否為中文字</span><br />
+        <span class="font9">範例 : if ( big5_isBig5(&quot;A&quot;) ) echo &quot;中文&quot; 
+        ; else echo &quot;英文&quot;;</span><br />
+        <span class="font9">輸出 : &quot;英文</span>&quot;<br />
+      </li>
+      <li> <font color="#009900"><strong><font color="#000099">string</font> big5_addslashes</strong></font>( 
+        <font color="#993300">string str</font>) : <span class="font9">字串中遇到單引號 
+        ' , 雙引號 &quot;, 斜線 \ 會增加斜線 \ , 若遇到中文字會忽略, 適合放入中文 database,或產生javascript變數用<br />
+        範例 : &lt;script&gt; alert(&quot;&lt;? echo big5_addslashes(&quot;許'\功\&quot;); 
+        ?&gt;&quot;); &lt;/script&gt;<br />
+        輸出 : 瀏覽器會跳出警告視窗內容為 &quot;許功&quot;<br />
+        </span> </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_stripslashes</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">遇到跳脫字元(\) 會將之刪除 , 但若中文中有一個位元組含有跳脫字元則忽略不處理<br />
+        範例 : echo big5_stripslashes( big5_addslashes(&quot;abc'功\&quot;));</span><br />
+        <span class="font9">輸出 : &quot;abc\'功&quot;<br />
+        </span> </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_addcslashes</strong></font>( 
+        <font color="#993300">string str , string charlist </font>) : <span class="font9">可以指定字元條件來讓字串中符合條件的字元增加跳脫字元(\) 
+        , 若遇到中文字會忽略<br />
+        範例 : echo big5_addcslashes('foo[ ]許\測試wale ', 'A..z'); <br />
+        </span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_stripcslashes</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">遇到跳脫字元(\) 會將之刪除 , 但若中文中有一個位元組含有跳脫字元則忽略不處理 , <font color="#FF0000">注 
+        : 遇到\0, \a, \b, \f, \n, \r, \t and \v 是把 \ 處理掉 , 而不是真正還原該字元<br />
+        </font></span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_substr</strong></font>(<font color="#993300"> 
+        string str , int start [, int length]</font> ) : <span class="font9">抓取指定位置的字串 
+        , 若 length 不輸入 , 則由參數 start 指定位置開始抓到字串 str 的最後一個字<br />
+        範例 : echo big5_substr(&quot;測試OK&quot; , 2 , 2);<br />
+        輸出 : &quot; OK&quot;;<br />
+        </span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_strlen</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">計算字串長度 , 中文或英文皆為一個字<br />
+        範例 : echo big5_strlen(&quot;測試OK&quot;);<br />
+        輸出 : 4<br />
+        </span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_strtolower</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">將字串內的所有英文字母轉為小寫 , 為何要有這個函數呢 ? 因為某些中文字員確實其中一個 Byte 
+        會是英文字 , 若用 PHP 原本的 strtolower , 則會把這種中文字轉亂了 , 因此使用本函數能保證不把中文變亂 , 以下範例若用 
+        strtolower 去輸出 , 那個 &quot;袍&quot; 字就亂了 ...<br />
+        範例 : echo big5_strtolower(&quot;Kobe Bryan 今天穿紫色戰袍上場&quot;);<br />
+        輸出 : kobe bryan 今天穿紫色戰袍上場</span><br />
+      </li>
+      <li> <font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_strtoupper</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">將字串內的所有英文字母轉為大寫<br />
+        </span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_chunk_split</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str , [int chunklen=76 
+        [, string end=&quot;\r\n&quot;] </font>) : <span class="font9">切割中英文字串 
+        , 預設每 76 個字會被切開並且斷行 , 可以指定 chunklen 來改變切割的字數 , 若設定 end 則可以改變每一個切割單位最後要加什麼字串<br />
+        範例 : echo big5_chunk_split(&quot;哈哈,你好笨&quot; , 2 , &quot;/&quot;);<br />
+        輸出 : &quot;哈哈/,你/好笨</span>&quot;<br />
+      </li>
+      <li> <font color="#000099"><strong>int </strong></font> <font color="#009900"><strong>big5_strpos</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">haystack , string 
+        needle , [, int offset] </font>) : <span class="font9">在字串 haystack中搜尋符合 
+        needle 的第一個位置 , offset 是指定要從第幾個字開始搜尋 , 請注意 , 若搜尋不到字串 , 會傳回 false , 若搜尋到的字串在第一個字就找到 
+        , 會傳回 0<br />
+        範例1 : echo big5_strpos( &quot;你真的好笨勒...&quot; , &quot;笨&quot;);<br />
+        輸出 : 4<br />
+        範例2 : if( !is_integer(big5_strpos(&quot;你好笨&quot; , &quot;CCC&quot;) )) 
+        echo &quot;Not Found&quot;;<br />
+        輸出 : &quot;Not Found&quot;<br />
+        </span></li>
+      <li> <font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_str_replace</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">search , string 
+        replace , string subject</font>) : <span class="font9">搜尋字串並取代 , subject 
+        是原來的字串 , search 是搜尋的字串 , replace 是搜尋後要取代的字串<br />
+        範例 : echo big5_str_replace(&quot;%姓名%&quot; , &quot;Mary&quot; , &quot;Hi 
+        , %姓名% 你好啊&quot;);<br />
+        輸出 : &quot;Hi , Mary 你好啊&quot;<br />
+        </span></li>
+      <li> <font color="#000099"><strong>int</strong></font> <font color="#009900"><strong>big5_stroke</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">計算單一中文筆劃數<br />
+        </span></li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_unicode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">將字串 str 轉為網頁用的 Unicode , 轉出後會變成 &amp;#nnnnn; 的格式</span><br />
+      </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_deunicode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">將字串網頁用的 Unicode 轉成 Big5 中文 , 也就是把 &amp;#nnnnn; 格式的字串轉成一般中文字串</span><br />
+      </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf8_encode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">BIG5 碼的字串轉 UTF-8 格式的字串</span><br />
+      </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf8_decode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">UTF-8 格式的字串字串轉 BIG5 格式的字串</span><br />
+      </li>
+      <li> <font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf16_encode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">BIG5 碼的字串轉 UTF-16 格式的字串<br />
+        </span> </li>
+      <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf16_decode</strong></font>( 
+        <font color="#993300">string</font> <font color="#993300">str</font>) 
+        : <span class="font9">UTF-16 格式的字串字串轉 BIG5 格式的字串</span></li>
+    </ul>
+    <p>&nbsp;</p>
+  </li>
+  <li>版本異動 <br />
+    <ul>
+      <li>0.19 版 (2003/1/7) <br />
+        <span class="font9">小幅修正 iconv 版的 big5_deunicode() , 稍微加快轉換速度 , 大概快5% 
+        ... 感覺不太出來 , 除非自己寫測速程式<br />
+        改寫 iconv 版的 big5_addslashes() , 速度增加非常多 , 應該有加快 50% ~ 100% , 另外iconv 版的 
+        big5_strtolower 與 big5_strtoupper 在處理長度較長的字串也有加快很多<br />
+        </span><br />
+      </li>
+      <li>0.18 版 (2002/12/01) <br />
+        <span class="font9">大幅修改所有字串處理函數充分使用到 iconv 來加速 , 並且新增 big5_func.default.php 
+        與 big5_func.iconv.php , 當有裝 iconv 時將會以 big5_func.iconv.php 內的函數處理 , 也是方便維護啦 
+        .. <br />
+        大家最常用來解決中文字串的 big5_addslashes() 至少增加 6 成以上速度 , 若字串的字元數很多越能感受到差異 , 其他的函數也至少有 
+        5 成以上的加速 , 當然前提是要安裝 iconv<br />
+        另外 , 我在 iconv 轉換國際碼部分改成以 CP950 來轉 , 而不是 BIG5 , 因為大多數人使用的 Windows 都是 CP950 
+        字集 , 他是 BIG5 的擴充 , 確實某些中文字或符號使用 iconv 以 BIG5 轉時會失效 , 因此才改成 CP950<br />
+        </span> </li>
+      <li>0.17 版 (2002/11/29)<br />
+        <span class="font9">修正許多 Bug <br />
+        1. Win32 版下 Cache 多國語言對應檔失效 , 已經修正 , 目前已經可正常在 WIN32 下執行<br />
+        2. big5_deunicode 在沒有 iconv 下轉換失敗<br />
+        3. 提升許多函數的效能大約5%的速度...真的有算過,HA HA<br />
+        特別感謝 Neil Lin(neil@vip.url.com.tw) 閒閒沒事幹幫我測試</span><br />
+      </li>
+      <li>0.16 版 (2002/11/27)<br />
+        <span class="font9">有點想哭了 , 檢查很多函數發覺還是有 bug , 此次修正很多函數如下<br />
+        big5_isBig5 : 改寫對於判斷是否為中文字的方式改變 , 特地去網路找到正確的編碼範圍 , 因此比較準確了<br />
+        big5_chunk_split : 無 iconv 中英文混在一起時會有錯誤<br />
+        big5_str_replace : 有 iconv 時會有問題<br />
+        big5_utf16_encode 與 big5_utf16_decode : 英文轉碼錯誤<br />
+        另外重新檢查過所有函數 , 也都有修改過 , 原來的函數多少都有加快運算速度了 </span><br />
+      </li>
+      <li>0.15 版 (2002/11/26) <br />
+        <span class="font9">大幅修正轉多國語言碼或轉回 BI5 時呼叫太多次 big5_func 函數時效能低落的情形<br />
+        修正原因 : 因為每次呼叫多國語言函數字碼的函數是每次呼叫每次要開檔讀檔 , 因此效能差<br />
+        所以利用新增的物件 Big5FileCache 改成只開檔一次 , 相關函數對 Big5FileCache 讀取資料<br />
+        但若 php 若安裝了 iconv , 則沒有效能的增進 ... 因為 iconv 夠快了<br />
+        另外 , 不知道怎麼稿的 ... big5_unicode() 裡頭有個小錯誤 , 如果沒裝 iconv 不能轉...已經修正 </span><br />
+      </li>
+      <li>0.14 版 (2002/11/22)<br />
+        新增 big5_deunicode() <br />
+      </li>
+      <li>0.13 版 (2002/05/27) <br />
+        <span class="font9">新增 big5_utf16_encode() big5_utf16_decode()<br />
+        並且嘗試使用 iconv 函數來加速字串處理(非常快)<br />
+        如果沒有安裝 iconv 仍可以繼續使用 , 不必考慮前版程式相容問題<br />
+        加速的函數有:<br />
+        big5_utf8_encode() : 加快100倍以上<br />
+        big5_utf8_decode() : 加快100倍以上<br />
+        big5_unicode() : 加快100倍以上<br />
+        big5_substr() : 當抓取的起始值由 200 開始或抓取字元數超過200才加速<br />
+        big5_strlen() : 字串如果只有 10 字差 3 倍 , 100 字以後差了 10 倍以上了 ...<br />
+        big5_strpos() : 此函數由big5_strlen與big5_substr組合寫成 , 連帶此函數也加速許多<br />
+        big5_chunk_split() : 此函數由big5_strlen與big5_substr組合寫成 , 連帶此函數也加速許多<br />
+        big5_str_replace() : 100 字的取代加快 50 倍以上,字串越長差異倍數越大 </span><br />
+      </li>
+      <li>0.12 版 (2002/04/23) <br />
+        <span class="font9">修正 stripcslashes() , big5_unicode()<br />
+        遇到\0, \a, \b, \f, \n, \r, \t \v 應該是要直接換成該對應的字<br />
+        big5_unicode 誤刪了一些東西照成什麼都轉不出來 ... shit </span><br />
+      </li>
+      <li>0.11 版 (2002/04/22)<br />
+        <span class="font9">加 big5_addcslashes() 與 big5_stripcslashes()<br />
+        作用與 addcslashes() 與 stripcslashes() 一樣 , 但是遇到中文字時則保留不轉換<br />
+        另外 big5 轉 utf8 unicode 的效能再度提昇 , 對照表也有更改<br />
+        測試 1 萬字轉 utf8 大約 0.8 秒以下 , 比前一版又快了 15% </span><br />
+      </li>
+      <li>0.10 版 (2002/04/21) <br />
+        <span class="font9">提昇 bi5 轉 utf8 , unicode , 效能再提升加快 2 倍<br />
+        據我自己的電腦測試 , 測試 1 萬中文字轉 utf8 已經可以低於 1 秒了 ...<br />
+        big5_substr() 重寫也加快了一點點速度 </span><br />
+      </li>
+      <li>0.09 版 (2002/04/20)<br />
+        <span class="font9">修正許多函數寫法 , 提昇效能<br />
+        據測試 : big5 轉 utf 與 big5 轉 unicode 提昇效能 0.08 版效能 10 倍以上<br />
+        測試 1 萬 個中文字轉 utf8 大約需要 2.2 秒 , 比前一版(居然超過2分鐘快上非常多)<br />
+        雖然還不是挺滿意 , 不過已經可以接受<br />
+        另外 big5_substr , big5_strlen 改了一些寫法所有快了一點點 ... </span><br />
+      </li>
+      <li>0.08 版 (2002/04/19) <br />
+        <span class="font9">新增 big5_unicode($string) , big5_utf8_encode(),big5_utf8_decode(), 
+        修改 big5_stroke($string) <br />
+        big5_unicode() 可以將中文轉成多國語言給網頁用的碼<br />
+        big5_utf8_encode() 可以將中文轉成 UTF8 碼<br />
+        big5_utf8_decode() 可以將 UTF8 轉成 BIG5 碼<br />
+        big5_stroke() 改成開檔方式 , 這樣不用到此函數時比較省記憶體 </span><br />
+      </li>
+      <li>0.07 版 (2002/4/12) <br />
+        <span class="font9">新增 int big5_stroke($string) <br />
+        此函數可計算單一中文字的筆劃 , 若輸入的不是中文則return false </span><br />
+      </li>
+      <li>0.06 版 (2002/2/22) <br />
+        <span class="font9">新增 big5_str_replace()<br />
+        此函數用法與 str_replace() 一樣 </span><br />
+      </li>
+      <li>0.05 版 (2002/2/13) <br />
+        <span class="font9">修正 big5_stripslashes()<br />
+        此函數會把所有 &quot;\&quot; 去掉的問題 , 謝謝網友Neil指正 <br />
+        </span> </li>
+      <li> 0.04 版 (2001/11/12) <br />
+        <span class="font9">把一些定義與判斷中文碼錯誤修正 , 感謝網友小藍 ...</span><br />
+      </li>
+      <li> 0.03 版(2001/06/16) <br />
+        <span class="font9">新增函數 : string big5_strpos(string haystack ,string 
+        needle , int [offset]) : 傳回第一個找到字串的位置</span><br />
+      </li>
+      <li> 0.02 版 (2001/05/28) <br />
+        <span class="font9">新增函數<br />
+        string big5_chunk_split(string $str, [int $chunklen=76] , [string $end=&quot;\r\n&quot;]) 
+        : 與 chunk_split 相同</span><br />
+      </li>
+      <li> 0.01 版 (2001/05/27)<br />
+        <span class="font9">第一版 提供的函數<br />
+        string big5_addslashes(string str) : 與 PHP addslashes 一樣的功能 , 可以處理中文<br />
+        string big5_stripslashes(string str) : 與 stripslashes 一樣<br />
+        int big5_strlen(string str) : 與 strlen 功能相同<br />
+        string big5_substr(string str,int start , int length) : 與 substr 一樣<br />
+        string big5_strtolower(string str) : 與 strtolower 一樣<br />
+        string big5_strtoupper(string str) : 與 strtoupper 一樣 </span></li>
+    </ul>
+  </li>
+</ol>
+</body>
+</html>
