@@ -139,6 +139,7 @@ function big5_strtoupper($str) {
 }
 function big5_str_replace($search , $replace, $subject)
 {
+
    $len = strlen($subject);
    $search_len = strlen($search);
    for($i=0; $i<$len; $i++)
@@ -202,12 +203,19 @@ function big5_strlen($str)
 
 function big5_substr($str,$start,$len=0)
 {
+
    $offset = 1; # 字元的指標
    if(!$len) $len = strlen($str);
    $str_len = strlen($str);
+   $big5_len = big5_strlen($str);
+   if($start < 0) $start = $big5_len+$start;
+   if($len<0) $len = $big5_len+$len-$start;
+  
    $return_str = "";
-   for($i=0; $i< $str_len; $i++)
+   for($i=0; $i< $str_len ; $i++)
    {
+     if($offset-$start-1 >= $len)
+           break;
      $ch = substr($str, $i , 2);
      if($offset>$start)
      {
@@ -218,8 +226,7 @@ function big5_substr($str,$start,$len=0)
        }
        else
        	   $return_str .= $ch[0];
-       if($offset-$start >= $len)
-           break;
+
      }
      else if( big5_isBig5($ch) )
          $i++;
@@ -231,43 +238,23 @@ function big5_substr($str,$start,$len=0)
 
 
 
-function big5_strpos($haystack ,$needle ,$offset=0) 
-{
-    $needle_len = big5_strlen($needle);
-    $len =big5_strlen($haystack);
-    for($i=$offset ; $i<$len ; $i++)
-    {
-         if(big5_substr($haystack,$offset+$i,$needle_len) == $needle)
-            return $i;
-    }
-    return false;
-}
-
-
-
 
 function big5_deunicode($str)
 {
     $regs = array();
     $tmp  = array();
+    $tmp_big5 = array();
+    $replace_arr = array();
     preg_match_all ("/&#[0-9]{1,5};/", $str, $regs);
-    $tmp = array_unique($regs[0]);
+
+    $tmp = array_values(array_unique($regs[0]));
     $len = count($tmp);
-
-    for($i=0 ; $i<$len ; $i++)
+    for($i=0 ; $i<$len; $i++)
     {
-        $s = dechex((int)str_replace(";" , "" , str_replace( "&#" , "", $tmp[$i])));
-        if( hexdec($s) <255 )
-    	    $str = str_replace($tmp[$i] , chr(hexdec($s)) , $str);
-        else
-        {
-            $bin = Chr( hexdec( substr($s,2,2))) . Chr( hexdec( substr($s,0,2))) ;
-    	    $replace = big5_utf16_decode( chr(0xff) . chr(0xfe) . $bin);
-    	    $str = str_replace($tmp[$i] , $replace , $str);
-    	}
+    	$s = sprintf("%04X",(int)str_replace( array(";" , "&#") , "", $tmp[$i]));
+    	$tmp_big5[$i] = big5_utf16_decode(UTF16_FIRST_CHAR. Chr( hexdec( substr($s,2,2))) . Chr( hexdec( substr($s,0,2))) );
     }
-    return $str;
-
+    return str_replace($tmp,$tmp_big5, $str) ;
 }
 
 function big5_unicode($str)
@@ -280,8 +267,9 @@ function big5_unicode($str)
 
     else
     {
-    	 echo "Can't Open file big5_unicode.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_unicode() : Can not open file '" . BIG5_FILE_DIR . "/big5_unicode.tab'", E_USER_ERROR );
+        restore_error_handler();
     }
 
     $len = strlen($str);
@@ -314,8 +302,9 @@ function big5_utf8_encode($str)
 
     else
     {
-    	 echo "Can't Open file big5_utf8.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_utf8_encode() : Can not open file '" . BIG5_FILE_DIR . "/big5_utf8.tab'", E_USER_ERROR );
+        restore_error_handler();
     }
 
 
@@ -350,8 +339,9 @@ function big5_utf8_decode($str)
     }
     else
     {
-    	 echo "Can't Open file utf8_big5.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_utf8_decode() : Can not open file '" . BIG5_FILE_DIR . "/utf8_big5.tab'", E_USER_ERROR );
+        restore_error_handler();
     }
 
     $len = strlen($str);
@@ -386,8 +376,9 @@ function big5_utf16_encode($str)
 
     else
     {
-    	 echo "Can't Open file big5_unicode.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_utf16_encode() : Can not open file '" . BIG5_FILE_DIR . "/big5_unicode.tab'", E_USER_ERROR );
+        restore_error_handler();
     }
 
     $len = strlen($str);
@@ -423,8 +414,9 @@ function big5_utf16_decode($str)
     }
     else
     {
-    	 echo "Can't Open file utf16_big5.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_utf16_decode() : Can not open file '" . BIG5_FILE_DIR . "/utf16_big5.tab'", E_USER_ERROR );
+        restore_error_handler();
     }
 
 

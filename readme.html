@@ -16,17 +16,13 @@
 </head>
 
 <body>
-<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.19</font></strong></p>
+<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.22</font></strong></p>
 <ol>
   <li>快速安裝方法 <span class="font9"><br />
     <br />
     <ul>
       <li class="font9"> 將 ZIP 檔案解開後 , 放到你喜歡的位置 , 例如 /var/www/htdocs/big5_func</li>
-      <li class="font9"> 修改 <font face="Arial, Helvetica, sans-serif">big5_func.inc</font> 
-        的 <font face="Arial, Helvetica, sans-serif">define(&quot;BIG5_FILE_DIR&quot; 
-        , UR_LIB_DIR ); ,</font> 將 UR_LIB_DIR 改成你放本函數的目錄 , 例如 define(&quot;BIG5_FILE_DIR&quot; 
-        , &quot;/var/www/htdocs/big5_func/&quot;);</li>
-      <li class="font9">在您的 php 程式以 require , require_once, include , include_once 
+      <li class="font9"> 在您的 php 程式以 require , require_once, include , include_once 
         將 big5_func.inc 引入 , 例如 include(&quot;big5_func/big5_func.inc&quot;);</li>
       <li class="font9">寫一支程式試試看 , 例如 : echo big5_addslashes(&quot;哈哈abc' '測試許\&quot;); 
         若正常顯示則代表安裝成功</li>
@@ -114,6 +110,20 @@
         echo &quot;Not Found&quot;;<br />
         輸出 : &quot;Not Found&quot;<br />
         </span></li>
+      <li><span class="font9"><font color="#000099"><strong>int </strong></font> 
+        </span><font color="#009900"><strong>big5_strrpos</strong></font>( <font color="#993300">string</font> 
+        <font color="#993300">haystack , char needle</font>) : <span class="font9"><span class="font9">在字串 
+        haystack中搜尋符合 needle 的最後一個位置 , 若搜尋到的<strong>字元(中文字算一個字元)</strong>在第一個字就找到 
+        , 會傳回 0 , 若找不到 needle 字元傳回 false , <font color="#FF0000"><strong>請注意 , 
+        按照 PHP 手冊的 strrpos 規範 , needle 必須為單一字元</strong></font>, 若 needle 為整數 , 
+        則會將該整數轉換為 ASCII 對應的字元 , 例如 needle=65 , 則 needle='A' , 若 needle=0xA440 
+        , 則 needle='一'<br />
+        範例1 : echo big5_strrpos( &quot;你真的好笨好笨勒...&quot; , &quot;笨&quot;);<br />
+        輸出 : 6<br />
+        範例2 : if( !is_integer(big5_strrpos(&quot;你好笨&quot; , &quot;哇&quot;) )) 
+        echo &quot;Not Found&quot;;<br />
+        輸出 : &quot;Not Found&quot;</span><br />
+        </span></li>
       <li> <font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_str_replace</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">search , string 
         replace , string subject</font>) : <span class="font9">搜尋字串並取代 , subject 
@@ -136,24 +146,39 @@
       </li>
       <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf8_encode</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">str</font>) 
-        : <span class="font9">BIG5 碼的字串轉 UTF-8 格式的字串</span><br />
+        : <span class="font9">BIG5 碼的字串轉為 UTF-8 格式的字串</span><br />
       </li>
       <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf8_decode</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">str</font>) 
-        : <span class="font9">UTF-8 格式的字串字串轉 BIG5 格式的字串</span><br />
+        : <span class="font9">UTF-8 格式的字串轉為 BIG5 格式的字串</span><br />
       </li>
       <li> <font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf16_encode</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">str</font>) 
-        : <span class="font9">BIG5 碼的字串轉 UTF-16 格式的字串<br />
+        : <span class="font9">BIG5 碼的字串轉為 UTF-16 格式的字串<br />
         </span> </li>
       <li><font color="#000099"><strong>string</strong></font> <font color="#009900"><strong>big5_utf16_decode</strong></font>( 
         <font color="#993300">string</font> <font color="#993300">str</font>) 
-        : <span class="font9">UTF-16 格式的字串字串轉 BIG5 格式的字串</span></li>
+        : <span class="font9">UTF-16 格式的字串轉為 BIG5 格式的字串</span></li>
     </ul>
     <p>&nbsp;</p>
   </li>
   <li>版本異動 <br />
     <ul>
+      <li>0.22 版 (2003/3/6) <br />
+        <span class="font9">應網友 ADar Que 要求 , 增加 big5_strrpos 函數 , 與原 PHP 的 strrpos 
+        用法一模一樣<br />
+        修正 big5_strpos() 若指定 offset 則傳回數字會錯誤 , 謝謝 Adar Que 指正<br />
+        增加一些函數的錯誤追蹤 , 方便撰寫程式時發生錯誤會顯示那一個函數,檔案,行數的錯誤<br />
+        </span></li>
+      <li>0.21 版 (2003/3/4) <br />
+        <span class="font9">修正 big5_substr() 當開始字串開始的位置為負數時會產生錯誤<br />
+        取消 big5_func.inc 需要指定 BIG5_FILE_DIR 的位置<br />
+        </span> </li>
+      <li>0.20 版 (2003/1/9) <br />
+        <span class="font9">修正 big5_deunicode() 的錯誤<br />
+        感謝網友小葉(tyrone@siryeh.com)指正<br />
+        </span><br />
+      </li>
       <li>0.19 版 (2003/1/7) <br />
         <span class="font9">小幅修正 iconv 版的 big5_deunicode() , 稍微加快轉換速度 , 大概快5% 
         ... 感覺不太出來 , 除非自己寫測速程式<br />

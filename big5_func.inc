@@ -9,8 +9,8 @@
 	寫這些程式是看見 LinuxFab 上討論區上很多人有中文問題才寫的
 	我不能保證會發生什麼問題 , 若有 bug 請來信討論不要謾罵
 	
-  時間 : 2003/1/6
-  版本 : 0.19
+  時間 : 2003/3/6
+  版本 : 0.22
   
 
   PS 1 : 詳細安裝方式與使用方式請參考 readme.html 
@@ -21,8 +21,8 @@
   
 */
 
-# 本函式庫存放的位置 , 很重要喔 , 請按照您實際放的位置來修改下面定義
-define("BIG5_FILE_DIR" , "./big5_func/" );  
+
+define("BIG5_FILE_DIR" , dirname(__FILE__) );
 
 
 
@@ -31,12 +31,35 @@ define("BIG5_FILE_DIR" , "./big5_func/" );
 define("BIG5_UNICODE_START" , 0xa140);	// 目前中文轉 Unicocde 的 BIG5 字起始值
 define("UTF16_FIRST_CHAR" ,chr(0xff).chr(0xfe));
 
+// Big5 error handler function
+function Big5ErrorHandler ($errno, $errstr, $errfile, $errline) {
+  $debug = debug_backtrace();
+  switch ($errno) {
+  case E_USER_ERROR:
+    echo "<br><b>Error: </b>$errstr in <b>".$debug[2][file] ."</b> on line " .$debug[2][line] ."<br>\n";
+    exit(1);
+    break;
+  case E_USER_WARNING:
+    echo "<br><b>Warring: </b>$errstr in <b>".$debug[2][file] ."</b> on line " .$debug[2][line] ."<br>\n";
+    break;
+  case E_USER_NOTICE:
+    echo "<br><b>Notice: </b> [$errno] $errstr<br>\n";
+    break;
+    default:
+    echo "Unkown error type: [$errno] $errstr<br>\n";
+    break;
+  }
+}
+
+
+
 if(function_exists("iconv"))
     include_once(BIG5_FILE_DIR . "/big5_func.iconv.php");
 else
     include_once(BIG5_FILE_DIR . "/big5_func.default.php");
 
-function big5_isBig5($c)
+
+function big5_isBig5($c="")
 {
 
   $bc  = hexdec(bin2hex($c));
@@ -49,18 +72,19 @@ function big5_isBig5($c)
   ) return true;
 
   return false;
-
 }
 
 // 計算中文字筆劃
-function big5_stroke($str)
+function big5_stroke($str="")
 {
 
     $tab=@File(BIG5_FILE_DIR  ."/big5_stroke.tab");
     if(!$tab)
     {
-    	 echo "Can't Open file big5_stroke.tab, plz check define BIG5_FILE_DIR is valid";
-    	 exit;
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_stroke() : Can not open file '" . BIG5_FILE_DIR . "/big5_stroke.tab'", E_USER_ERROR );
+        restore_error_handler();
+
     }
 
     /* 讀取轉換表至陣列 $StrokeMapping */
@@ -97,5 +121,46 @@ function big5_chunk_split($str, $chunklen=76 , $end="\r\n")
       $tmp[] = big5_substr($str,$i,$chunklen) ;
 
    return implode( $end , $tmp);
+}
+
+function big5_strpos($haystack ,$needle ,$offset=0) 
+{
+    if($offset < 0 || !is_int($offset))
+    {
+        $error_handler = set_error_handler("Big5ErrorHandler");
+        trigger_error ("big5_strpos(string haystack,string needle,int <b>offset=0</b>) : offset must >= 0 or ignore", E_USER_WARNING );
+        restore_error_handler();
+        return false;
+    }
+    $needle_len = big5_strlen($needle);
+    $len =big5_strlen($haystack);
+    for($i=$offset ; $i<$len ; $i++)
+    {
+        if(big5_substr($haystack,$i,$needle_len) == $needle)
+            return $i;
+    }
+    return false;
+}
+
+function big5_strrpos($haystack , $needle)
+{
+    $first_char = "";
+    if( is_int($needle) )
+    {
+        $hex = dechex($needle);
+        $first_char = chr(hexdec(substr($hex,0,2)));
+        if(strlen($hex)>2)
+            $first_char .= chr(hexdec(substr($hex,2,2)));
+    }
+    else
+        $first_char = big5_substr($needle,0,1);
+    echo $first_char;
+    $len =big5_strlen($haystack);
+    for($i=$len ; $i>-1 ; $i--)
+    {
+         if(big5_substr($haystack,$i,1) == $first_char)
+            return $i;
+    }
+    return false;
 }
 ?>

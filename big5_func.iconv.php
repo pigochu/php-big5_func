@@ -144,22 +144,14 @@ function big5_strlen($str)
 function big5_substr($str,$start,$len=0)
 {
    if(!$len) $len = strlen($str);
+   if($start < 0) $start = big5_strlen($str)+$start;
+   
+
    return iconv("UTF-16",BIG5_ENCODER,substr(iconv(BIG5_ENCODER,"UTF-16",$str),($start+1)*2,$len*2));
 }
 
 
 
-function big5_strpos($haystack ,$needle ,$offset=0) 
-{
-    $needle_len = big5_strlen($needle);
-    $len =big5_strlen($haystack);
-    for($i=$offset ; $i<$len ; $i++)
-    {
-        if(big5_substr($haystack,$offset+$i,$needle_len) == $needle)
-            return $i;
-    }
-    return false;
-}
 
 
 
@@ -167,25 +159,18 @@ function big5_deunicode($str)
 {
     $regs = array();
     $tmp  = array();
+    $tmp_big5 = array();
     $replace_arr = array();
     preg_match_all ("/&#[0-9]{1,5};/", $str, $regs);
 
-    $tmp = array_unique($regs[0]);
+    $tmp = array_values(array_unique($regs[0]));
     $len = count($tmp);
-
-    for($i=0 ; $i<$len ; $i++)
+    for($i=0 ; $i<$len; $i++)
     {
-        $s = dechex((int)str_replace(";" , "" , str_replace( "&#" , "", $tmp[$i])));
-        if( hexdec($s) <255 )
-    	    $str = str_replace($tmp[$i] , chr(hexdec($s)) , $str);
-        else
-        {
-            $bin = Chr( hexdec( substr($s,2,2))) . Chr( hexdec( substr($s,0,2))) ;
-    	    $replace = iconv("UTF-16",BIG5_ENCODER, UTF16_FIRST_CHAR . $bin);
-    	    $str = str_replace($tmp[$i] , $replace , $str);
-    	}
+    	$s = sprintf("%04X",(int)str_replace( array(";" , "&#") , "", $tmp[$i]));
+    	$tmp_big5[$i] = iconv("UTF-16",BIG5_ENCODER,UTF16_FIRST_CHAR. Chr( hexdec( substr($s,2,2))) . Chr( hexdec( substr($s,0,2))));
     }
-    return $str;
+    return str_replace($tmp,$tmp_big5, $str) ;
 }
 
 function big5_unicode($str)
