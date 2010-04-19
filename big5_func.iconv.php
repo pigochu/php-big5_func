@@ -1,24 +1,22 @@
 <?php
 /* big5 function use iconv */
 
-# 假如 CP950 有問題可以改成 BIG5
-# define("BIG5_ENCODER" , "BIG5");
-define("BIG5_ENCODER" , "CP950");
 
-function big5_addslashes($str) {
-    return iconv("UTF-8" , BIG5_ENCODER ,
-                 addslashes(iconv(BIG5_ENCODER,"UTF-8" , $str)) );
-}
+// 此版本已經移除 , 改用查表法比較適合
+//function big5_addslashes($str) {
+//    return iconv("UTF-8" , BIG5_ENCODER ,
+//                 addslashes(iconv(BIG5_ENCODER,"UTF-8" , $str)) );
+//}
 
 function big5_addcslashes($str,$charlist) {
     return iconv("UTF-8" , BIG5_ENCODER ,
                  addcslashes(iconv(BIG5_ENCODER,"UTF-8" , $str),$charlist) );
 }
-function big5_stripslashes($str) {
-    return iconv("UTF-8" , BIG5_ENCODER ,
-                 stripslashes(iconv(BIG5_ENCODER,"UTF-8" , $str)) );
+// function big5_stripslashes($str) {
+//    return iconv("UTF-8" , BIG5_ENCODER ,
+//                 stripslashes(iconv(BIG5_ENCODER,"UTF-8" , $str)) );
+// }
 
-}
 function big5_stripcslashes($str) {
     return iconv("UTF-8" , BIG5_ENCODER ,
                  stripcslashes(iconv(BIG5_ENCODER,"UTF-8" , $str)) );

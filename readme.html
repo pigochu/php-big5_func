@@ -17,7 +17,7 @@
 </head>
 
 <body>
-<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.23</font></strong></p>
+<p align="center"><strong><font color="#000099" size="5">Big5 字串處理函數 ver 0.24</font></strong></p>
 <ol>
   <li>快速安裝方法 <span class="font9"><br />
     <br />
@@ -173,6 +173,10 @@
   </li>
   <li>版本異動 <br />
     <ul>
+      <li>0.24 版 (2005/8/20) <br />
+      1.做夢中忽然想到對於某些特殊字原採用查表法來取代會蠻快的,因此實作後使用 big5_addslashes,big5_stripslashes 會比以前增加效能快上數十倍 ^^<br>
+      2.效能增加讓我出乎意料 , 在沒有安裝 iconv 下 , 若字串在百字以內,轉換速度比 iconv 還要快 , 若在萬字以上才會稍微落後 iconv , 因此本版已經把 big5_func.iconv.php 中的 addslashes,big5_stripslashes 拿掉
+      </li>
       <li>0.23 版 (2005/1/20) <br />
       1. 判斷是否有 mb function , 若有 , 則某些函數的效能可以加快 , 為何不另外做一個 big5_func.mb.php ? 因為經過測試 , mb function 的轉碼 mb_convert_encoding() 在速度上比 iconv 速度慢太多 .. 所以不打算另外做一個全新的函數 , 而只挑幾個速度快的函數修改<br />
  2. 修改 big5_func.iconv.php 內的函數 , 採用 UTF-8 來轉碼 , 改變的原因不明 ... 不知道以前怎麼想的 ... 怎會用 UTF-16 轉來轉去又判斷一堆有的沒的 , 另外就是有網友討論 , ICONV 新版本在使用 big5_addslashes big5_stripslashes 出現錯誤而建議我改寫 , 因此就改成以 UTF-8 直接轉</li>

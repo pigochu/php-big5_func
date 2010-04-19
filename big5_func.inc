@@ -9,8 +9,8 @@
 	寫這些程式是看見 LinuxFab 上討論區上很多人有中文問題才寫的
 	我不能保證會發生什麼問題 , 若有 bug 請來信討論不要謾罵
 	
-  時間 : 2005/1/20
-  版本 : 0.23
+  時間 : 2005/8/20
+  版本 : 0.24
   
 
   PS 1 : 詳細安裝方式與使用方式請參考 readme.html 
@@ -28,7 +28,9 @@
 
 
 define("BIG5_FILE_DIR" , dirname(__FILE__) );
-
+# 假如 CP950 有問題可以改成 BIG5
+# define("BIG5_ENCODER" , "BIG5");
+define("BIG5_ENCODER" , "CP950");
 
 /* 程式開始 */
 
@@ -171,4 +173,45 @@ function big5_strrpos($haystack , $needle)
     }
     return false;
 }
+
+$_big5_slashchars = array();
+$_big5_addslasheschars = array();
+
+function _big5_init_slashchars() {
+    global $_big5_slashchars,$_big5_addslasheschars;
+    if(!count($_big5_slashchars)) {
+    	$i=0;
+    	
+        for($j=0xa1; $j<0xc7 ; $j++)
+        {
+            $_big5_slashchars[$i++] = chr($j) . '\\';
+            $_big5_addslasheschars[$i++] = chr($j) . "\\\\";
+        }
+        for($j=0xc1; $j<0xfa ; $j++)
+        {
+            $_big5_slashchars[$i++] = chr($j) . '\\';
+            $_big5_addslasheschars[$i++] = chr($j) . "\\\\";
+        }
+    }
+}
+
+
+function big5_addslashes($str) {
+    global $_big5_addslasheschars,$_big5_slashchars;
+    _big5_init_slashchars();
+    $ret_str = "";
+    $ret_str = addslashes($str);
+    $ret_str = str_replace( $_big5_addslasheschars , $_big5_slashchars ,$ret_str);
+    return $ret_str;
+}
+
+function big5_stripslashes($str) {
+    global $_big5_addslasheschars,$_big5_slashchars;
+    _big5_init_slashchars();
+    $ret_str = "";
+    $ret_str = str_replace( $_big5_slashchars , $_big5_addslasheschars ,$str);
+    $ret_str = stripslashes( $ret_str );
+    return $ret_str;
+}
+
 ?>

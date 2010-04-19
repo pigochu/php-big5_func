@@ -2,6 +2,7 @@
 /* big5 function default */
 
 
+
 class Big5FileCache {
     var $Big5Cache = array();
     /* 開檔 */
@@ -119,15 +120,16 @@ function big5_global_func($str,$func,$op1="")
    return $return_str;
 }
 
-function big5_addslashes($str) {
-   return big5_global_func($str,"addslashes");
-}
+// 此版本已經移除
+//function big5_addslashes($str) {
+//   return big5_global_func($str,"addslashes");
+//}
 function big5_addcslashes($str,$charlist) {
    return big5_global_func($str,"addcslashes",$charlist);
 }
-function big5_stripslashes($str) {
-   return big5_global_func($str,"stripslashes");
-}
+// function big5_stripslashes($str) {
+//   return big5_global_func($str,"stripslashes");
+//}
 function big5_stripcslashes($str) {
    return big5_global_func($str,"stripcslashes");
 }
